@@ -96,8 +96,8 @@ router.post('/login', function(req, res, next){
 			};
 			
 			var token = jwt.sign(profile, 'super secret secret');
-					
-			res.json({"msg": ""});
+
+			res.json({token: token});
 			//res.redirect('/users');
 		}else{
 			res.redirect('/login');
@@ -120,17 +120,19 @@ router.get('/api/users', function(req, res, next){
 	});
 });
 
-router.get('/friends/:id', function(req, res, next){
+router.get('/api/friends/:id', function(req, res, next){
 	req.currentUser(function(err, user){
-
-		res.json();
+		client.smembers('friends:'+req.params.id, function(err, data){
+			res.json({friends: data});
+		});
 	});
 });
 
-router.post('/friends/:id', function(req, res, next){
+router.post('/api/friends/:id', function(req, res, next){
 	req.currentUser(function(err, user){
-
-		res.json();
+		client.sadd('friends:'+req.params.id, req.body.friend, function(err, data){
+			res.json({results: "friend added"});
+		});
 	});
 });
 

@@ -1,11 +1,10 @@
 'use strict'
 
-var msgApp = angular.module('myApp',['ngRoute']);
+var msgApp = angular.module('myApp',['ngRoute','angular-jwt']);
 
-// msgApp.config(function Config($httpProvider, jwtInterceptorProvider){
-
-	
-// });
+msgApp.config(function ($httpProvider) {
+  $httpProvider.interceptors.push('authInterceptor');
+});
 
 msgApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
 	$routeProvider
@@ -32,7 +31,7 @@ msgApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $
 	$locationProvider.html5Mode(true);
 }]);
 
-msgApp.controller('MainCtrl', ['$scope', 'socket', '$http', '$location', function($scope, socket, $http, $location){
+msgApp.controller('MainCtrl', ['$scope', 'socket', '$http', '$location', '$window','jwtHelper',function($scope, socket, $http, $location, $window, jwtHelper){
 	$scope.test = "Angular is working!";
 
 	$scope.signup = function(){
@@ -49,28 +48,42 @@ msgApp.controller('MainCtrl', ['$scope', 'socket', '$http', '$location', functio
 
 		//authenticate user and get 
 		$http.post('/login',{person: $scope.person})
-		.success(function(data){
+		.success(function(data, status, headers, config){
 			//set the JWT token here
+			console.log("THIS IS THE TOKEN FROM SERVER: "+data.token);
+			$window.sessionStorage.token = data.token;
+
 			$location.path('/users');
 		}).error(function(err){
+			delete $window.sessionStorage.token;
+
 			$location.path('/login');
 		}); 
 	};
 
 
 	//friends code
-	function getFriends(){
-		$http.get('/friends/'+userId).success(function(f){
-			$scope.friends = f;
+	$scope.addFriend = function(){
+		var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
+
+		$http.post('/api/friends/'+userInfo.id, {friend: $scope.newFriend})
+		.success(function(res){
+			$scope.newFriend = "";
+			getFriends();
 		}).error(function(err){
 			console.log(err);
 		});
 	};
 
-	$scope.addFriend = function(){
-		$http.post('/friends/'+userId, {friends: $scope.newFriend})
-		.success(function(res){
-			getFriends();
+	if($window.sessionStorage.token){
+		getFriends();
+	}
+
+	function getFriends(){
+		var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
+
+		$http.get('/api/friends/'+userInfo.id).success(function(f){
+			$scope.friends = f.friends;
 		}).error(function(err){
 			console.log(err);
 		});
@@ -93,6 +106,24 @@ msgApp.controller('MainCtrl', ['$scope', 'socket', '$http', '$location', functio
 	};
 
 }]);
+
+msgApp.factory('authInterceptor', function ($rootScope, $q, $window, $location) {
+  return {
+    request: function (config) {
+      config.headers = config.headers || {};
+      if ($window.sessionStorage.token) {
+        config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+      }
+      return config;
+    },
+    response: function (response) {
+      if (response.status === 401) {
+        $location.path('/login');
+      }
+      return response || $q.when(response);
+    }
+  };
+});
 
 msgApp.factory('socket', function($rootScope){
 	var socket = io.connect();
