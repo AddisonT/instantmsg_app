@@ -38,13 +38,14 @@ User.prototype.save = function(cb){
 User.authenticate = function(email, password, cb){
 	var key = 'user:'+email;
 	client.hgetall(key, function(err,data){
-		console.log("pwd_digest:::::::  "+data.password_digest);
+		//console.log("pwd_digest:::::::  "+data.password_digest);
 		bcrypt.compare(password, data.password_digest, function(err,isPass){
 			if (isPass) {
 				cb(null, data);
 			} else {
 				console.log("THIS is from AUTH");
 				console.log(isPass, data);
+				cb(null, false);
 			}
 		});
 	});

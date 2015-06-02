@@ -32,34 +32,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 // app.use('/users', users);
 
-// app.use(session({
-//   secret: 'supersuper secret',
-//   resave: false,
-//   saveUninitialized: true
-// }));
-
-// app.use(function(req, res, next){
-//   req.login = function(user){
-//     req.session.userId = user.email;
-//   };
-
-//   req.currentUser = function(){
-//     //get user's data from redis
-//     var key = 'user:'+req.session.userId;
-//     return client.hgetall('user', function(err, data){
-//       req.user = data;
-//       return data;
-//     });
-//   };
-
-//   req.logout = function(){
-//     req.session.userId = null;
-//     req.user = null;
-//   };
-
-//   next();
-// });
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
