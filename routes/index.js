@@ -5,6 +5,7 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 
 var redis = require('redis');
+console.log("PROCESS ENV URL ", process.env.REDISTOGO_URL);
 if(process.env.REDISTOGO_URL){
 	var rtg   = require("url").parse(process.env.REDISTOGO_URL);
 	var client = redis.createClient(rtg.port, rtg.hostname);
