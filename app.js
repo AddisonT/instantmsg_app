@@ -13,14 +13,18 @@ var users = require('./routes/users');
 var redis = require('redis');
 var bcrypt = require('bcrypt');
 var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-if(rtg.hostname){
+// if(rtg.hostname){
+
+//   var client = redis.createClient(rtg.port, rtg.hostname, {no_ready_check: true});
+
+//   client.auth(rtg.auth.split(":")[1]);
+// }else{
+//   var client = redis.createClient(/* host, port*/);
+// }
 
   var client = redis.createClient(rtg.port, rtg.hostname, {no_ready_check: true});
 
   client.auth(rtg.auth.split(":")[1]);
-}else{
-  var client = redis.createClient(/* host, port*/);
-}
 
 // var http = require('http').Server(app);
 // var io = require('socket.io')(http);
