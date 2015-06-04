@@ -126,3 +126,5 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+app.listen(process.env.PORT || 3000)
