@@ -12,8 +12,9 @@ var users = require('./routes/users');
 
 var redis = require('redis');
 var bcrypt = require('bcrypt');
-if(process.env.REDISTOGO_URL){
-  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+if(rtg.hostname){
+
   var client = redis.createClient(rtg.port, rtg.hostname, {no_ready_check: true});
 
   client.auth(rtg.auth.split(":")[1]);
