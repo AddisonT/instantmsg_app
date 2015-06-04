@@ -12,7 +12,14 @@ var users = require('./routes/users');
 
 var redis = require('redis');
 var bcrypt = require('bcrypt');
-var client = redis.createClient(/* host, port*/);
+if(process.env.REDISTOGO_URL){
+  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+  var client = redis.createClient(rtg.port, rtg.hostname);
+
+  client.auth(rtg.auth.split(":")[1]);
+}else{
+  var client = redis.createClient(/* host, port*/);
+}
 
 // var http = require('http').Server(app);
 // var io = require('socket.io')(http);
