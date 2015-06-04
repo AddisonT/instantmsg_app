@@ -8,7 +8,7 @@ var redis = require('redis');
 console.log("PROCESS ENV URL ", process.env.REDISTOGO_URL);
 if(process.env.REDISTOGO_URL){
 	var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-	var client = redis.createClient(rtg.port, rtg.hostname,, {no_ready_check: true});
+	var client = redis.createClient(rtg.port, rtg.hostname, {no_ready_check: true});
 
 	client.auth(rtg.auth.split(":")[1]);
 }else{
