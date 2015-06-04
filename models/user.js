@@ -1,5 +1,13 @@
 var redis = require('redis');
-var client = redis.createClient(/* host, port*/);
+var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+if(rtg.hostname){
+
+  var client = redis.createClient(rtg.port, rtg.hostname, {no_ready_check: true});
+
+  client.auth(rtg.auth.split(":")[1]);
+}else{
+  var client = redis.createClient(/* host, port*/);
+}
 var bcrypt = require('bcrypt');
 	
 function User(email,name){

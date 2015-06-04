@@ -6,18 +6,14 @@ var bodyParser = require('body-parser');
 
 var redis = require('redis');
 var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-// if(rtg.hostname){
-
-//   var client = redis.createClient(rtg.port, rtg.hostname, {no_ready_check: true});
-
-//   client.auth(rtg.auth.split(":")[1]);
-// }else{
-//   var client = redis.createClient(/* host, port*/);
-// }
+if(rtg.hostname){
 
   var client = redis.createClient(rtg.port, rtg.hostname, {no_ready_check: true});
 
   client.auth(rtg.auth.split(":")[1]);
+}else{
+  var client = redis.createClient(/* host, port*/);
+}
 
 var expressJwt = require('express-jwt');
 var jwt = require('jsonwebtoken');
