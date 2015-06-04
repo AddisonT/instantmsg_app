@@ -4,13 +4,13 @@
 	<div>List of Friends</div>
 
 	<form ng-submit="addFriend()">
+		<div>Enter friend's email to add:</div>
 		<input type="text" ng-model="newFriend" placehodler="Enter friend's email">
 		<button>Submit</button>
 	</form>
 
-	<div ng-repeat="friend in friends">
-		<div>{{friend}}</div>
-	</div>
-	
-
+	<div ng-repeat="person in friends | orderBy: 'friend'">
+		<!-- <a href="/chat/{{person.roomname}}" ng-click="joinChat(person.roomname)">{{person.friend}}</a> -->
+		<a ui-sref="chat({id: '{{person.roomname}}'})" ng-click="joinChat(person.roomname)">{{person.friend}}</a>
+	</div>	
 </div>

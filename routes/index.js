@@ -105,15 +105,6 @@ router.post('/login', function(req, res, next){
 	});
 });
 
-// router.get('/auth', function(req,res,next){
-// 	req.currentUser(function(err, u){
-// 		console.log("I'm here in the test route. User is "+ u);
-// 		res.render('test', {user: u});
-// 	});
-
-// 	// res.render('test');
-// });
-
 router.get('/api/users', function(req, res, next){
 	req.currentUser(function(err, user){
 		res.render('user', {user: user});
@@ -130,8 +121,16 @@ router.get('/api/friends/:id', function(req, res, next){
 
 router.post('/api/friends/:id', function(req, res, next){
 	req.currentUser(function(err, user){
-		client.sadd('friends:'+req.params.id, req.body.friend, function(err, data){
-			res.json({results: "friend added"});
+		var key = "user:"+req.body.friend;
+		client.sismember('users', key, function(err, created){
+
+			if(!!created){
+				client.sadd('friends:'+req.params.id, req.body.friend, function(err, data){
+					res.json({results: "friend added"});
+				});
+			} else {
+				res.json({results: "user doesn't exist"});
+			}
 		});
 	});
 });

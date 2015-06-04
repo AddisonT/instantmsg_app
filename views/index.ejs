@@ -16,9 +16,11 @@
 <body ng-app="myApp">
 	<h1>Welcome to Index Page</h1>
 	<div ng-controller="MainCtrl">
-		<a href="/login">Login</a>
-		<a href="/signup">SignUp</a>
-	<div ng-view></div>
+		<!-- <a href="/login">Login</a>
+		<a href="/signup">SignUp</a> -->
+	<a ui-sref="login">Login</a>
+    <a ui-sref="signup">SignUp</a>
+	<div ui-view></div>
 	</div>
 </body>
 </html>

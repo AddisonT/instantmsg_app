@@ -29,11 +29,28 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 
 io.on('connection', function(user){
+
   console.log("a user connected");
 
   user.on('chat message', function(msg){
     console.log("I'm at the server side. MSG is: "+ msg);
     io.emit('chat message', msg);
+  });
+
+  user.on('create room', function(roomName){
+    console.log("You've joined the room on server: " + roomName);
+
+    this.join(roomName);
+  });
+
+  user.on('chat', function(msg){
+    console.log("Server side msg " + msg);
+    io.to(msg[1]).emit('chat',msg);
+  });
+
+  user.on('key press', function(msg){
+    console.log("Server received key press msg from client: "+msg[0]);
+    io.to(msg[1]).emit('key press', msg);
   });
 
   user.on('disconnect', function(){
