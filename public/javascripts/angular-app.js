@@ -213,7 +213,10 @@ msgApp.controller('ChatCtrl',
 	$scope.onKeyS = function($event){
 		var enterKeyCode = 13;
 		console.log("THIS IS KEY CODE ", $event.keyCode );
-		if ($event.keyCode !== enterKeyCode){
+
+
+		setTimeout(function(){
+			if ($event.keyCode !== enterKeyCode){
 
 			var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
 
@@ -222,6 +225,16 @@ msgApp.controller('ChatCtrl',
 			socket.emit('key press', [message, $stateParams.id, userInfo.id]);
 			console.log("I HAVE PRESSED A KEY ON CLIENT SIDE IT IS: ", message);
 		}
+		}, 20);
+		// if ($event.keyCode !== enterKeyCode){
+
+		// 	var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
+
+		// 	var message = ""+userInfo.name+": "+$scope.message;
+
+		// 	socket.emit('key press', [message, $stateParams.id, userInfo.id]);
+		// 	console.log("I HAVE PRESSED A KEY ON CLIENT SIDE IT IS: ", message);
+		// }
 	};
 
 }]);
