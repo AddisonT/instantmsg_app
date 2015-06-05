@@ -1,5 +1,5 @@
 var redis = require('redis');
-var client = redis.createClient(/* host, port*/);
+//var client = redis.createClient(/* host, port*/);
 
 var url = require('url');
 
