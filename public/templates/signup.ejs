@@ -1,8 +1,13 @@
-<div>
-	<form ng-submit="signup()">
-		<input type="text" placeholder="name" ng-model="person.name">
-		<input type="text" placeholder="email address" ng-model="person.email">
-		<input type="password" placeholder="password" ng-model="person.password">
-		<button>Submit</button>
-	</form>
+<div class='container'>
+	<div class="row">
+		<div class="col-xs-12 text-center">
+			<div>Signup</div>
+			<form ng-submit="signup()">
+				<input type="text" placeholder="name" ng-model="person.name"><br/>
+				<input type="text" placeholder="email address" ng-model="person.email"><br/>
+				<input type="password" placeholder="password" ng-model="person.password"><br/>
+				<button>Submit</button>
+			</form>
+		</div>
+	</div>
 </div>

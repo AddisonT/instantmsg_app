@@ -1,7 +1,10 @@
-<ul id="messages"></ul>
-<li>{{myString}}</li>
-<li>{{yourString}}</li>
-<form class="chat" ng-submit="chat()">
-	<input id="m" autocomplete="off" ng-model="message" ng-init="message = ''" ng-keydown="onKeyS($event)" />
-	<button>Submit</button>
-</form>
+<div>
+	<ul id="messages">
+		<li id="myMsg">{{myString}}</li>
+		<li>{{yourString}}</li>
+	</ul>
+	<form class="chat" ng-submit="chat()">
+		<input id="m" autocomplete="off" ng-model="message" ng-init="message = ''" ng-keydown="onKeyS($event)" />
+		<button>Submit</button>
+	</form>
+</div>

@@ -40,7 +40,7 @@ msgApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, 
 	$stateProvider
 	.state('root',{
 		url: '/',
-		templateUrl: "/templates/index.ejs",
+		templateUrl: "/templates/home.ejs",
 		controller: 'MainCtrl'
 	})
 	.state('signup',{
@@ -163,8 +163,8 @@ msgApp.controller('ChatCtrl',
 		var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
 		console.log("Client msg received "+msg[0]);
 		console.log("Client msg received userID is "+msg[2]);
-		angular.element('#messages').append($('<li>').text(msg[0]));
-
+		//angular.element('#messages').append($('<li>').text(msg[0]));
+		angular.element($('<li>').text(msg[0])).insertBefore('#myMsg');
 		if(msg[2] !== userInfo.id){
 			$scope.yourString = "";
 		} 
