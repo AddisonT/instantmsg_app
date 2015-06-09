@@ -6,34 +6,6 @@ msgApp.config(function ($httpProvider) {
   $httpProvider.interceptors.push('authInterceptor');
 });
 
-// msgApp.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
-// 	$routeProvider
-// 	.when('/',{
-// 		templateUrl: "/templates/index.ejs",
-// 		controller: 'MainCtrl'
-// 	})
-// 	.when('/signup',{
-// 		templateUrl: '/templates/signup.ejs',
-// 		controller: 'MainCtrl'
-// 	})
-// 	.when('/login',{
-// 		templateUrl: '/templates/login.ejs',
-// 		controller: 'MainCtrl'
-// 	}).when('/users',{
-// 		templateUrl: '/templates/user.ejs',
-// 		controller: 'MainCtrl'
-// 	})
-// 	.when('/chat/:id',{
-// 		templateUrl: '/templates/chat.ejs',
-// 		controller: 'ChatCtrl'
-// 	})
-// 	.otherwise({
-// 		redirectTo: '/'
-// 	});
-
-// 	$locationProvider.html5Mode(true);
-// }]);
-
 msgApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
 	$urlRouterProvider.otherwise('/');
 
@@ -211,7 +183,7 @@ msgApp.controller('ChatCtrl',
 		console.log("THIS IS KEY CODE ", $event.keyCode );
 
 		$location.hash('yourMsg');
-		
+
 		setTimeout(function(){
 			if ($event.keyCode !== enterKeyCode){
 
