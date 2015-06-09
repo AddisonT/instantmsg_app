@@ -27,9 +27,6 @@ router.use(session({
 
 router.use('/api', expressJwt({secret: 'super secret secret'}));
 
-//need the json express middle
-// router.use(express.json());
-// router.use(express.urlencoded());
 router.use(bodyParser.json());
 
 router.use(function(req, res, next){

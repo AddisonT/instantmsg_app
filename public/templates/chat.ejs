@@ -1,10 +1,17 @@
+<div class="container">
+	<div class="row">
+		<div class="col-xs-12 text-center">
+			<a ui-sref="users">Back to Profile Page</a>
+		</div>
+	</div>
+</div>
 <div>
 	<ul id="messages">
 		<li id="myMsg">{{myString}}</li>
-		<li>{{yourString}}</li>
+		<li id="yourMsg">{{yourString}}</li>
 	</ul>
 	<form class="chat" ng-submit="chat()">
-		<input id="m" autocomplete="off" ng-model="message" ng-init="message = ''" ng-keydown="onKeyS($event)" />
+		<input id="m" autocomplete="off" ng-model="message" ng-init="message = ''" ng-keydown="onKeyS($event)"/>
 		<button>Submit</button>
 	</form>
 </div>

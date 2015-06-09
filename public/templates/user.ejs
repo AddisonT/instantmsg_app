@@ -1,16 +1,21 @@
 <div class="container">
-	<div>This is the user page</div>
-	
-	<div>List of Friends</div>
-
-	<form ng-submit="addFriend()">
-		<div>Enter friend's email to add:</div>
-		<input type="text" ng-model="newFriend" placehodler="Enter friend's email">
-		<button>Submit</button>
-	</form>
-
-	<div ng-repeat="person in friends | orderBy: 'friend'">
-		<!-- <a href="/chat/{{person.roomname}}" ng-click="joinChat(person.roomname)">{{person.friend}}</a> -->
-		<a ui-sref="chat({id: '{{person.roomname}}'})" ng-click="joinChat(person.roomname)">{{person.friend}}</a>
-	</div>	
+	<div class="row">
+		<div class="col-xs-12 text-center">
+			<div>Profile Page</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 text-center">
+			<div>List of Your Friends</div>
+			<form ng-submit="addFriend()">
+				<div>Enter friend's email to add to list:</div>
+				<input type="text" ng-model="newFriend" placehodler="Enter friend's email">
+				<button>Submit</button>
+			</form>
+			<div ng-repeat="person in friends | orderBy: 'friend'">
+				<!-- <a href="/chat/{{person.roomname}}" ng-click="joinChat(person.roomname)">{{person.friend}}</a> -->
+				<a ui-sref="chat({id: '{{person.roomname}}'})" ng-click="joinChat(person.roomname)">{{person.friend}}</a>
+			</div>	
+		</div>
+	</div>
 </div>

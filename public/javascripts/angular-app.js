@@ -150,8 +150,8 @@ msgApp.controller('MainCtrl',
 }]);
 
 msgApp.controller('ChatCtrl',
-	['$scope', '$window', 'socket', 'jwtHelper', '$location', '$routeParams','$state', '$stateParams', 
-	function($scope, $window, socket, jwtHelper, $location, $routeParams, $state, $stateParams){
+	['$scope', '$window', 'socket', 'jwtHelper', '$location', '$state', '$stateParams', '$anchorScroll',
+	function($scope, $window, socket, jwtHelper, $location, $state, $stateParams, $anchorScroll){
 
 	socket.on('chat message', function(msg){
 		console.log("Attached msg");
@@ -177,10 +177,6 @@ msgApp.controller('ChatCtrl',
 		socket.emit('chat message', $scope.message);
 		$scope.message = "";
 	};
-
-	// $scope.$watch('myString', function(newValue, oldValue) {
-	// 		$scope.myString = newValue;
-	// });
 
 	$scope.chat = function(){
 		console.log("scope is", $scope);
@@ -214,27 +210,21 @@ msgApp.controller('ChatCtrl',
 		var enterKeyCode = 13;
 		console.log("THIS IS KEY CODE ", $event.keyCode );
 
-
+		$location.hash('yourMsg');
+		
 		setTimeout(function(){
 			if ($event.keyCode !== enterKeyCode){
 
-			var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
+				var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
 
-			var message = ""+userInfo.name+": "+$scope.message;
+				var message = ""+userInfo.name+": "+$scope.message;
 
-			socket.emit('key press', [message, $stateParams.id, userInfo.id]);
-			console.log("I HAVE PRESSED A KEY ON CLIENT SIDE IT IS: ", message);
-		}
+				socket.emit('key press', [message, $stateParams.id, userInfo.id]);
+				console.log("I HAVE PRESSED A KEY ON CLIENT SIDE IT IS: ", message);
+			}
 		}, 20);
-		// if ($event.keyCode !== enterKeyCode){
 
-		// 	var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
-
-		// 	var message = ""+userInfo.name+": "+$scope.message;
-
-		// 	socket.emit('key press', [message, $stateParams.id, userInfo.id]);
-		// 	console.log("I HAVE PRESSED A KEY ON CLIENT SIDE IT IS: ", message);
-		// }
+		$anchorScroll();
 	};
 
 }]);
