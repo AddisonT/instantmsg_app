@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var redis = require('redis');
 var url = require('url');
 //var client = redis.createClient(/* host, port*/);
+
+//code for allowing redis to work with Heroku
 if(process.env.REDISTOGO_URL){
 	var rtg = url.parse(process.env.REDISTOGO_URL);
 	var client = redis.createClient(rtg.port, rtg.hostname, {no_ready_check: true});
@@ -25,10 +27,11 @@ router.use(session({
   saveUninitialized: true
 }));
 
+//for using JWTS
 router.use('/api', expressJwt({secret: 'super secret secret'}));
-
 router.use(bodyParser.json());
 
+//creating user sessions
 router.use(function(req, res, next){
   req.login = function(user){
   		console.log("THIS IS USER FROM LOGIN " + user);
@@ -38,9 +41,9 @@ router.use(function(req, res, next){
   req.currentUser = function(cb){
     //get user's data from redis
     var key = 'user:'+req.session.userId;
-    console.log("THIS IS THE KEY "+ key);
+    //console.log("THIS IS THE KEY "+ key);
     client.hgetall(key, function(err, data){
-    	console.log("THIS IS THE USER   "+ data);
+    	//console.log("THIS IS THE USER   "+ data);
     	req.user = data;
     	cb(null,data);
     });
@@ -54,7 +57,6 @@ router.use(function(req, res, next){
   next();
 });
 
-/* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index');
 });
@@ -63,14 +65,14 @@ router.get('/signup', function(req, res, next){
 	res.render('signup', {title: 'Testing signup page'});
 });
 
+//rouute for signing up a user on the backend
 router.post('/signup', function(req,res,next){
-	console.log("THIS IS REQ BODY IN SIGN UP"+req.body.person);
+	//console.log("THIS IS REQ BODY IN SIGN UP"+req.body.person);
 	var member = new User(req.body.person.email, req.body.person.name);
 	member.encryptPassword(req.body.person.password, function(user){
 		
 		user.save(function(err, resp){
 			res.json({"msg": "You signed up"});
-			//res.redirect('login');
 		});
 	});
 });
@@ -88,8 +90,10 @@ router.get('/login', function(req, res, next){
 	res.render('login', {title: "login"});
 });
 
+//client makes an ajax request to this route to authenticate a user on login
+//if the user is succesfully logged it, the route will send a JWT to the client 
 router.post('/login', function(req, res, next){
-	console.log(req.body);
+	//console.log(req.body);
 	User.authenticate(req.body.person.email, req.body.person.password, function(err, data){
 		console.log("ERR: " + err);
 		if(data){
@@ -104,7 +108,6 @@ router.post('/login', function(req, res, next){
 			var token = jwt.sign(profile, 'super secret secret');
 
 			res.json({token: token});
-			//res.redirect('/users');
 		}else{
 			res.redirect('/login');
 		}
@@ -117,6 +120,7 @@ router.get('/api/users', function(req, res, next){
 	});
 });
 
+//route for client side ajax request for getting the current user's list of friends from redis.
 router.get('/api/friends/:id', function(req, res, next){
 	req.currentUser(function(err, user){
 		client.smembers('friends:'+req.params.id, function(err, data){
@@ -125,6 +129,7 @@ router.get('/api/friends/:id', function(req, res, next){
 	});
 });
 
+//route for client side ajax request for adding a user to his/her friend list.
 router.post('/api/friends/:id', function(req, res, next){
 	req.currentUser(function(err, user){
 		var key = "user:"+req.body.friend;

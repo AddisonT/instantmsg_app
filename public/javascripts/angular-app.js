@@ -52,10 +52,8 @@ msgApp.controller('MainCtrl',
 
 		$http.post('/signup',{person: $scope.person})
 		.success(function(data){
-			//$location.path('/login');
 			$state.go('login');
 		}).error(function(err){
-			//$location.path('/signup');
 			$state.go('signup');
 		}); 
 	};
@@ -69,22 +67,23 @@ msgApp.controller('MainCtrl',
 			console.log("THIS IS THE TOKEN FROM SERVER: "+data.token);
 			$window.sessionStorage.token = data.token;
 
-			//$location.path('/users');
 			$state.go('users');
 		}).error(function(err){
 			delete $window.sessionStorage.token;
 
-			//$location.path('/login');
 			$state.go('login');
 		}); 
 	};
 
+	//method called when clicking on a friend's name that makes the user join a room
+	//specific to user and his friend 
 	$scope.joinChat = function(roomName){
 		console.log("Client side room name: "+ roomName);
 		socket.emit('create room', roomName);
 	};
 
-	//friends code
+	//makes an AJAX post to the server to add a new friend to the current user
+	//and then updates the list by calling getFriends();
 	$scope.addFriend = function(){
 		var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
 
@@ -97,22 +96,24 @@ msgApp.controller('MainCtrl',
 		});
 	};
 
+	//gets the list of friends of the user from the server and stores them in hash with
+	//the room name so a room can be made on the namespace of the user.
 	function getFriends(){
 		var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
 
 		$http.get('/api/friends/'+userInfo.id).success(function(f){
-			//$scope.friends = f.friends;
-			var friendHash = [];
+			
+			var friendArr = [];
 
 			for(var i = 0; i < f.friends.length;i++){
 				if( userInfo.id < f.friends[i]){
-					friendHash.push({friend: f.friends[i], roomname: ""+userInfo.id+"-"+f.friends[i]});
+					friendArr.push({friend: f.friends[i], roomname: ""+userInfo.id+"-"+f.friends[i]});
 				} else {
-					friendHash.push({friend: f.friends[i], roomname: ""+f.friends[i]+"-"+userInfo.id});
+					friendArr.push({friend: f.friends[i], roomname: ""+f.friends[i]+"-"+userInfo.id});
 				}
 			}
 
-			$scope.friends = friendHash;
+			$scope.friends = friendArr;
 
 		}).error(function(err){
 			console.log(err);
@@ -121,16 +122,26 @@ msgApp.controller('MainCtrl',
 
 }]);
 
+//controller for the chat page
 msgApp.controller('ChatCtrl',
 	['$scope', '$window', 'socket', 'jwtHelper', '$location', '$state', '$stateParams', '$anchorScroll',
 	function($scope, $window, socket, jwtHelper, $location, $state, $stateParams, $anchorScroll){
 
-	socket.on('chat message', function(msg){
-		console.log("Attached msg");
-		console.log(angular.element('#messages'));
-		angular.element('#messages').append($('<li>').text(msg));
+	// socket.on('chat message', function(msg){
+	// 	console.log("Attached msg");
+	// 	console.log(angular.element('#messages'));
+	// 	angular.element('#messages').append($('<li>').text(msg));
+	// });
+	
+	//removes the listener when moving from a different controller so we don't
+	//recreate the listener when switching back to this controller
+	$scope.$on('$destroy', function (event) {
+		socket.getSocket().removeAllListeners();
 	});
 
+	//recieves a message from the server and appends it before the input display of the li 
+	//element. If the message received is from the other user, then reset the other user's
+	//display string value to empty
 	socket.on('chat', function(msg){
 		var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
 		console.log("Client msg received "+msg[0]);
@@ -142,31 +153,32 @@ msgApp.controller('ChatCtrl',
 		} 
 	});
 
-	$scope.send = function(){
-		$scope.test = "clicked button!";
-		console.log("You clicked the send button");
-
-		socket.emit('chat message', $scope.message);
-		$scope.message = "";
-	};
-
+	//sends the message that the user wrote and resets the values of the message
+	//and display string to be empty
 	$scope.chat = function(){
 		console.log("scope is", $scope);
 		var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
 
 		var message = ""+userInfo.name+": "+$scope.message;
 		//console.log("This is route params "+ $routeParams.id);
-		
+		$scope.roomName = $stateParams.id;
 		socket.emit('chat', [message, $stateParams.id, userInfo.id]);
 		
 		$scope.message = "";
 		$scope.myString = "";
 	};
 
+	//function that emits the roomname to the server side to leave the room
+	$scope.leaveRoom = function(){
+		console.log("you've left the room ", $scope.roomName);
+		socket.emit('leave room', $scope.roomName);
+	}
 	//////////////////////////////////////
 	$scope.myString = "";
 	$scope.yourString = "";
 
+	//when we receieve a key press event from the server we need to determine if that message
+	//is from the user or the other person the user is chatting with and then display the message
 	socket.on('key press', function(msg){
 		var userInfo = jwtHelper.decodeToken($window.sessionStorage.token);
 		console.log("This is the key pressed received from server: "+msg[1]);
@@ -178,11 +190,10 @@ msgApp.controller('ChatCtrl',
 		}
 	});
 
+	//method that emits the current value of input message each time a keydown event occurs
 	$scope.onKeyS = function($event){
 		var enterKeyCode = 13;
 		console.log("THIS IS KEY CODE ", $event.keyCode );
-
-		$location.hash('yourMsg');
 
 		setTimeout(function(){
 			if ($event.keyCode !== enterKeyCode){
@@ -195,12 +206,14 @@ msgApp.controller('ChatCtrl',
 				console.log("I HAVE PRESSED A KEY ON CLIENT SIDE IT IS: ", message);
 			}
 		}, 20);
-
+		//scrolls the chat view to the li element where the input msg is being displayed of the user
+		$location.hash('yourMsg');
 		$anchorScroll();
 	};
 
 }]);
 
+//factory for authenticating the JWT token 
 msgApp.factory('authInterceptor', function ($rootScope, $q, $window, $location) {
   return {
     request: function (config) {
@@ -219,6 +232,7 @@ msgApp.factory('authInterceptor', function ($rootScope, $q, $window, $location) 
   };
 });
 
+//socket factory to get socket.io working on the frontend with angular
 msgApp.factory('socket', function($rootScope){
 	var socket = io.connect();
 	return {
@@ -239,6 +253,9 @@ msgApp.factory('socket', function($rootScope){
 					}
 				});
 			})
+		},
+		getSocket: function() {
+			return socket;
 		}
 	};
 });

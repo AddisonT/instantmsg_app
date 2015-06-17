@@ -14,10 +14,6 @@ var User = require('../models/user');
  * Get port from environment and store in Express.
  */
 
-// io.on('connection', function(socket){
-//   console.log("USER CONNECTED");
-// });
-
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
@@ -51,6 +47,11 @@ io.on('connection', function(user){
   user.on('key press', function(msg){
     console.log("Server received key press msg from client: "+msg[0]);
     io.to(msg[1]).emit('key press', msg);
+  });
+
+  user.on('leave room', function(room){
+    console.log("You've left the room ", room);
+    this.leave(room);
   });
 
   user.on('disconnect', function(){

@@ -1,7 +1,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-xs-12 text-center">
-			<a ui-sref="users">Back to Profile Page</a>
+			<a ui-sref="users" ng-click="leaveRoom()">Back to Profile Page</a>
 		</div>
 	</div>
 </div>
@@ -10,8 +10,14 @@
 		<li id="myMsg">{{myString}}</li>
 		<li id="yourMsg">{{yourString}}</li>
 	</ul>
-	<form class="chat" ng-submit="chat()">
-		<input id="m" autocomplete="off" ng-model="message" ng-init="message = ''" ng-keydown="onKeyS($event)"/>
-		<button>Submit</button>
+	<form class="chat form-inline" ng-submit="chat()">
+		<div class="panel-footer">
+			<div class="input-group msg-form">
+				<input id="m" class="form-control" autocomplete="off" ng-model="message" ng-init="message = ''" ng-keydown="onKeyS($event)"/>
+				<span class="input-group-btn">
+					<button class="btn btn-info">Send</button>			
+				</span>
+			</div>
+		</div>
 	</form>
 </div>
