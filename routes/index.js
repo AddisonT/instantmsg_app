@@ -93,7 +93,7 @@ router.get('/login', function(req, res, next){
 //client makes an ajax request to this route to authenticate a user on login
 //if the user is succesfully logged it, the route will send a JWT to the client 
 router.post('/login', function(req, res, next){
-	//console.log(req.body);
+	console.log("Login ajax request on server side ", req.body);
 	User.authenticate(req.body.person.email, req.body.person.password, function(err, data){
 		console.log("ERR: " + err);
 		if(data){

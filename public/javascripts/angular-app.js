@@ -6,7 +6,7 @@ msgApp.config(function ($httpProvider) {
   $httpProvider.interceptors.push('authInterceptor');
 });
 
-msgApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
+msgApp.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider){
 	$urlRouterProvider.otherwise('/');
 
 	$stateProvider
@@ -36,7 +36,7 @@ msgApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, 
 		controller: 'ChatCtrl',
 		params: {id: null}
 	});
-
+	$locationProvider.html5Mode(true);
 }]);
 
 msgApp.controller('MainCtrl',
@@ -68,12 +68,17 @@ msgApp.controller('MainCtrl',
 			$window.sessionStorage.token = data.token;
 
 			$state.go('users');
+			console.log("Code after state");
 		}).error(function(err){
 			delete $window.sessionStorage.token;
 
 			$state.go('login');
 		}); 
 	};
+
+	$scope.logout = function(){
+		delete $window.sessionStorage.token;
+	}
 
 	//method called when clicking on a friend's name that makes the user join a room
 	//specific to user and his friend 
