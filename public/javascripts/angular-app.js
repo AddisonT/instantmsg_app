@@ -131,12 +131,6 @@ msgApp.controller('MainCtrl',
 msgApp.controller('ChatCtrl',
 	['$scope', '$window', 'socket', 'jwtHelper', '$location', '$state', '$stateParams', '$anchorScroll',
 	function($scope, $window, socket, jwtHelper, $location, $state, $stateParams, $anchorScroll){
-
-	// socket.on('chat message', function(msg){
-	// 	console.log("Attached msg");
-	// 	console.log(angular.element('#messages'));
-	// 	angular.element('#messages').append($('<li>').text(msg));
-	// });
 	
 	//removes the listener when moving from a different controller so we don't
 	//recreate the listener when switching back to this controller
